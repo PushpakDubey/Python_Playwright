@@ -1,0 +1,31 @@
+services:
+    python_playwright:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: python_playwright
+        volumes:
+            - .:/app
+        environment:
+            - PIPENV_VENV_IN_PROJECT=1
+        command: pipenv run python main.py
+        depends_on:
+            - chromium
+        networks:
+            - python_playwright
+        tty: true
+        stdin_open: true
+    chromium:
+        image: mcr.microsoft.com/playwright:bionic
+        platform: linux/amd64
+        container_name: chromium
+        networks:
+            - python_playwright
+        environment:
+            - PIPENV_VENV_IN_PROJECT=1
+        command: bash
+        tty: true
+        stdin_open: true
+networks:
+    python_playwright:
+        driver: bridge
